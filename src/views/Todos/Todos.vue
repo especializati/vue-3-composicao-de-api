@@ -3,31 +3,30 @@
 
     <ul>
         <li v-for="todo in todos" :key="todo.identify">
-            {{ todo.name }}
+            {{ todo.title }}
         </li>
     </ul>
     <input type="text" v-model="name">
 </template>
 
 <script>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+
+import TodoService from '@/services/todos.service'
 
 export default {
     name: 'Todos',
     setup() {
-        const todos = [
-            {identify: 1, name: 'tarefa 01', completed: true},
-            {identify: 2, name: 'tarefa 02', completed: false},
-            {identify: 3, name: 'tarefa 03', completed: true},
-        ]
+        const todos = ref([])
 
-        const name = ref('default value')
-
-        name.value = 'teste 2'
+        onMounted(() => {
+            TodoService.getAll()
+                    .then(response => todos.value = response.data.data)
+                    .catch(error => console.log(error))
+        })
 
         return {
             todos,
-            name
         }
     }
 }
